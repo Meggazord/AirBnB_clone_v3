@@ -49,7 +49,7 @@ def search_places():
 
         if amenities:
             if not states and not cities:
-                 places = [place for place in storage.all(Place).values() if all(amenity in place.amenities for amenity in amenities)]
+                places = [place for place in storage.all(Place).values() if all(amenity in place.amenities for amenity in amenities)]
             else:
                 places = {place for place in places if all(amenity in place.amenities for amenity in amenities)}
 
