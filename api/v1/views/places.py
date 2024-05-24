@@ -26,6 +26,33 @@ def search_places():
     if not states and not cities and not amenities:
         places = list(storage.all(Place).values())
 
+    if amenities:
+        if not states and not cities:
+            places = [place for place in storage.all(Place).values() if all(amenity in place.amenities for amenity in amenities)]
+        else:
+            places = set()
+            processed_city_ids = set()
+
+            if states:
+                for state_id in states:
+                    state = storage.get(State, state_id)
+                    if state:
+                        for city in state.cities:
+                            if city.id not in processed_city_ids:
+                                places.update([place for place in city.places if all(amenity in place.amenities for amenity in amenities)])
+                                processed_city_ids.add(city.id)
+
+            if cities:
+                for city_id in cities:
+                    if city_id not in processed_city_ids:
+                        city = storage.get(City, city_id)
+                        if city:
+                            places.update([place for place in city.places if all(amenity in place.amenities for amenity in amenities)])
+                            processed_city_ids.add(city_id)
+
+        places_list = [place.to_dict() for place in places]
+        return jsonify(places_list)
+
     else:
         places = set()
         processed_city_ids = set()
@@ -46,17 +73,9 @@ def search_places():
                     if city:
                         places.update(city.places)
                         processed_city_ids.add(city_id)
-        
-        if amenities:
-            updated_places = set()
-            amenity_objs = [storage.get(Amenity, amenity_id) for amenity_id in amenities]
-            for place in places:
-                if all(amenity in place.amenities for amenity in amenity_objs):
-                    updated_places.update(place)
-            places = updated_places
 
-    places_list = [place.to_dict() for place in places]
-    return jsonify(places_list), 200
+        places_list = [place.to_dict() for place in places]
+        return jsonify(places_list)
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'], strict_slashes=False)
 def get_places(city_id):
