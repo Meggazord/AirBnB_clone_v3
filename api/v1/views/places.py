@@ -45,7 +45,7 @@ def search_places():
                         processed_city_ids.add(city_id)
         
         if amenities:
-            amenity_objs = [storage.get(Amenity, amenity_id) for amendity_id in amenities]
+            amenity_objs = [storage.get(Amenity, amenity_id) for amenity_id in amenities]
             places = [place for place in places if all(amenity in place.amenities for amenity in amenity_objs)]
 
         places_list = [place.to_dict() for place in places]
