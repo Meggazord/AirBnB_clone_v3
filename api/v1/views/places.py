@@ -48,7 +48,10 @@ def search_places():
                         processed_city_ids.add(city_id)
 
         if amenities:
-            places = {place for place in places if all(amenity in place.amenities for amenity in amenities)}
+            if not states and not cities:
+                 places = [place for place in storage.all(Place).values() if all(amenity in place.amenities for amenity in amenities)]
+            else:
+                places = {place for place in places if all(amenity in place.amenities for amenity in amenities)}
 
     places_list = [place.to_dict() for place in places]
     return jsonify(places_list)
