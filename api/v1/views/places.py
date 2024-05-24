@@ -13,6 +13,7 @@ from models.amenity import Amenity
         
 @app.route('/api/v1/places_search', methods=['POST'], strict_slashes=False)
 def places_search():
+    """ Search function """
     if not request.is_json:
         abort(400, description="Not a JSON")
 
