@@ -21,14 +21,16 @@ def search_places():
     cities = search_criteria.get('cities', [])
     amenities = search_criteria.get('amenities', [])
 
-    places = storage.all(Place).values()
+    places = set()
+    for state_id in states:
+        state = storage.get(State, state_id)
+        if state:
+            for place in (place for city in state.cities for place in city.places):
+                places.add(place)
 
-    if states:
-        state_cities = [city for state in (storage.get(State, state_id).cities for state_id in states if storage.get(State, state_id)) for city in state.cities]
-        places = [place for place in places if place.city_id in (city.id for city in state_cities)]
-
-    if cities:
-        places = [place for place in places if place.city_id in cities]
+    city_ids = set(cities)
+    for place in (place for city in (storage.get(City, city_id) for city_id in cities if storage.get(City, city_id)) for place in city.places if place.city_id not in city_ids):
+        places.add(place)
 
     if amenities:
         amenity_objs = [storage.get(Amenity, amenity_id) for amenity_id in amenities if storage.get(Amenity, amenity_id)]
