@@ -9,42 +9,8 @@ from models import storage
 from models.place import Place
 from models.city import City
 from models.user import User
-
-@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
-def search_places():
-    """Retrieves all Place objects depending on the JSON in the body of the request"""
-    if not request.get_json():
-        abort(400, description="Not a JSON")
-
-    search_criteria = request.get_json()
-    states = search_criteria.get('states', [])
-    cities = search_criteria.get('cities', [])
-    amenities = search_criteria.get('amenities', [])
-
-    if not states and not cities and not amenities:
-        places = storage.all(Place).value()
-    else:
-        places = set()
-        processed_city_ids = set()
-
-        if states:
-            for state_id in states:
-                state = storage.get(State, state_id)
-                if state:
-                    for city in state.cities:
-                        if city.id not in processed_city_ids:
-                            places.add(city.places)
-                            processed_city_ids.add(city.id)
-
-        if cities:
-            for city_id in cities:
-                if city_id not in processed_city_ids:
-                    city = storage.get(City, city_id)
-                    if city:
-                        places.update(city.places)
-                        processed_city_ids.add(city_id)
         
-        @app_views.route('/places_search', methods=['POST'], strict_slashes=False)
+@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
 def search_places():
     """Retrieves all Place objects depending on the JSON in the body of the request"""
     if not request.get_json():
