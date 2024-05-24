@@ -52,11 +52,11 @@ def search_places():
             amenity_objs = [storage.get(Amenity, amenity_id) for amenity_id in amenities]
             for place in places:
                 if all(amenity in place.amenities for amenity in amenity_objs):
-                    updated_places.add(place)
+                    updated_places.update(place)
             places = updated_places
 
     places_list = [place.to_dict() for place in places]
-    return jsonify(places_list)
+    return jsonify(places_list), 200
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'], strict_slashes=False)
 def get_places(city_id):
