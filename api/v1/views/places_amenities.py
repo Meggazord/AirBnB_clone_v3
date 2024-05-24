@@ -7,6 +7,8 @@ from flask import jsonify, request, abort
 from api.v1.views import app_views
 from models import storage
 from models.place import Place
+from models.city import City
+from models.state import State
 from models.amenity import Amenity
 from os import getenv
 

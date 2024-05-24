@@ -33,7 +33,7 @@ def search_places():
                 if state:
                     for city in state.cities:
                         if city.id not in processed_city_ids:
-                            places.update(city.places)
+                            places.add(city.places)
                             processed_city_ids.add(city.id)
 
         if cities:
